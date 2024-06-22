@@ -40,7 +40,7 @@ pub extern "C" fn call() {
 	unwrap_output!(val, [0u8; 4], api::get_storage, &KEY);
 	assert_eq!(**val, VALUE_1);
 
-	let existing = api::set_storage_v1(&KEY, &VALUE_2);
+	let existing = api::set_storage(&KEY, &VALUE_2);
 	assert_eq!(existing, Some(VALUE_1.len() as _));
 	unwrap_output!(val, [0u8; 4], api::get_storage, &KEY);
 	assert_eq!(**val, VALUE_2);
@@ -48,15 +48,15 @@ pub extern "C" fn call() {
 	api::clear_storage(&KEY);
 	assert_eq!(api::contains_storage(&KEY), None);
 
-	let existing = api::set_storage_v2(&KEY, &VALUE_3);
+	let existing = api::set_storage(&KEY, &VALUE_3);
 	assert_eq!(existing, None);
-	assert_eq!(api::contains_storage_v1(&KEY), Some(VALUE_1.len() as _));
-	unwrap_output!(val, [0u8; 32], api::get_storage_v1, &KEY);
+	assert_eq!(api::contains_storage(&KEY), Some(VALUE_1.len() as _));
+	unwrap_output!(val, [0u8; 32], api::get_storage, &KEY);
 	assert_eq!(**val, VALUE_3);
 
-	api::clear_storage_v1(&KEY);
-	assert_eq!(api::contains_storage_v1(&KEY), None);
-	let existing = api::set_storage_v2(&KEY, &VALUE_3);
+	api::clear_storage(&KEY);
+	assert_eq!(api::contains_storage(&KEY), None);
+	let existing = api::set_storage(&KEY, &VALUE_3);
 	assert_eq!(existing, None);
 	unwrap_output!(val, [0u8; 32], api::take_storage, &KEY);
 	assert_eq!(**val, VALUE_3);

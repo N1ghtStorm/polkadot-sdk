@@ -34,7 +34,7 @@ pub extern "C" fn deploy() {
 	let address = &mut &mut address[..];
 	let salt = [71u8, 17u8];
 
-	api::instantiate_v2(
+	api::instantiate(
 		code_hash,
 		0u64, // How much ref_time weight to devote for the execution. 0 = all.
 		0u64, // How much proof_size weight to devote for the execution. 0 = all.
@@ -59,7 +59,7 @@ pub extern "C" fn call() {
 	api::get_storage(&ADDRESS_KEY, callee_addr).unwrap();
 
 	// Calling the destination contract with non-empty input data should fail.
-	let res = api::call_v2(
+	let res = api::call(
 		uapi::CallFlags::empty(),
 		callee_addr,
 		0u64, // How much ref_time weight to devote for the execution. 0 = all.
@@ -72,7 +72,7 @@ pub extern "C" fn call() {
 	assert!(matches!(res, Err(uapi::ReturnErrorCode::CalleeTrapped)));
 
 	// Call the destination contract regularly, forcing it to self-destruct.
-	api::call_v2(
+	api::call(
 		uapi::CallFlags::empty(),
 		callee_addr,
 		0u64, // How much ref_time weight to devote for the execution. 0 = all.

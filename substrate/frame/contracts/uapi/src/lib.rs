@@ -20,12 +20,9 @@
 
 mod flags;
 pub use flags::*;
-
-#[cfg(any(target_arch = "wasm32", target_arch = "riscv32"))]
 mod host;
 
-#[cfg(any(target_arch = "wasm32", target_arch = "riscv32"))]
-pub use host::*;
+pub use host::{HostFn, HostFnImpl};
 
 macro_rules! define_error_codes {
     (

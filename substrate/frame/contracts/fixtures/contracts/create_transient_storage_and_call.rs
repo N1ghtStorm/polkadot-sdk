@@ -42,7 +42,7 @@ pub extern "C" fn call() {
 	api::set_transient_storage(buffer, value);
 
 	// Call the callee
-	api::call_v2(
+	api::call(
 		uapi::CallFlags::empty(),
 		callee,
 		0u64, // How much ref_time weight to devote for the execution. 0 = all.
