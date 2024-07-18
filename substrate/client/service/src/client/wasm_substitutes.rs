@@ -93,7 +93,7 @@ impl From<WasmSubstituteError> for sp_blockchain::Error {
 #[derive(Debug)]
 pub struct WasmSubstitutes<Block: BlockT, Executor, Backend> {
 	/// spec_version -> WasmSubstitute
-	substitutes: Arc<HashMap<u32, WasmSubstitute<Block>>>,
+	substitutes: Arc<HashMap<u32, Vec<WasmSubstitute<Block>>>>,
 	executor: Executor,
 	backend: Arc<Backend>,
 }
@@ -120,24 +120,23 @@ where
 		executor: Executor,
 		backend: Arc<Backend>,
 	) -> Result<Self> {
-		let substitutes = substitutes
-			.into_iter()
-			.map(|(block_number, code)| {
-				let runtime_code = RuntimeCode {
-					code_fetcher: &WrappedRuntimeCode((&code).into()),
-					heap_pages: None,
-					hash: make_hash(&code),
-				};
-				let version = Self::runtime_version(&executor, &runtime_code)?;
-				let spec_version = version.spec_version;
+		let mut result = HashMap::new();
 
-				let substitute = WasmSubstitute::new(code, block_number, version);
+		for (block_number, code) in substitutes {
+			let runtime_code = RuntimeCode {
+				code_fetcher: &WrappedRuntimeCode((&code).into()),
+				heap_pages: None,
+				hash: make_hash(&code),
+			};
+			let version = Self::runtime_version(&executor, &runtime_code)?;
+			let spec_version = version.spec_version;
 
-				Ok((spec_version, substitute))
-			})
-			.collect::<Result<HashMap<_, _>>>()?;
+			let substitute = WasmSubstitute::new(code, block_number, version);
 
-		Ok(Self { executor, substitutes: Arc::new(substitutes), backend })
+			result.entry(spec_version).or_insert_with(Vec::new).push(substitute);
+		}
+
+		Ok(Self { executor, substitutes: Arc::new(result), backend })
 	}
 
 	/// Get a substitute.
@@ -149,9 +148,15 @@ where
 		pages: Option<u64>,
 		hash: Block::Hash,
 	) -> Option<(RuntimeCode<'_>, RuntimeVersion)> {
-		let s = self.substitutes.get(&spec)?;
-		s.matches(hash, &*self.backend)
-			.then(|| (s.runtime_code(pages), s.version.clone()))
+		let ss = self.substitutes.get(&spec)?;
+
+		for s in ss {
+			if s.matches(hash, &*self.backend) {
+				return Some((s.runtime_code(pages), s.version.clone()));
+			}
+		}
+
+		None
 	}
 
 	fn runtime_version(executor: &Executor, code: &RuntimeCode) -> Result<RuntimeVersion> {
