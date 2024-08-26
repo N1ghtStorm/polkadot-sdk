@@ -23,7 +23,7 @@ mod cli;
 #[cfg(feature = "cli")]
 mod command;
 #[cfg(feature = "cli")]
-mod error;
+pub mod error;
 
 #[cfg(feature = "service")]
 pub use service::{self, Block, CoreApi, IdentifyVariant, ProvideRuntimeApi, TFullClient};
