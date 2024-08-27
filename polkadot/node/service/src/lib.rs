@@ -22,7 +22,7 @@ pub mod benchmarking;
 pub mod chain_spec;
 mod fake_runtime_api;
 mod grandpa_support;
-mod parachains_db;
+pub mod parachains_db;
 mod relay_chain_selection;
 
 #[cfg(feature = "full-node")]
