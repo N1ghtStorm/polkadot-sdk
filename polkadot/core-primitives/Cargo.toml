@@ -15,6 +15,10 @@ sp-std = { path = "../../substrate/primitives/std", default-features = false }
 sp-runtime = { path = "../../substrate/primitives/runtime", default-features = false }
 scale-info = { version = "2.11.1", default-features = false, features = ["derive"] }
 parity-scale-codec = { version = "3.6.1", default-features = false, features = ["derive"] }
+fp-account = { workspace = true, features = ["serde"] }
+fp-evm = { workspace = true, features = ["serde"] }
+fp-rpc = { workspace = true }
+fp-self-contained = { workspace = true, features = ["serde"] }
 
 [features]
 default = ["std"]
@@ -24,4 +28,8 @@ std = [
 	"sp-core/std",
 	"sp-runtime/std",
 	"sp-std/std",
+	"fp-account/std",
+	"fp-evm/std",
+	"fp-rpc/std",
+	"fp-self-contained/std",
 ]

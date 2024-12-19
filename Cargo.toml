@@ -572,8 +572,16 @@ syn = { version = "2.0.53" }
 thiserror = { version = "1.0.48" }
 tracing-subscriber = { version = "0.3.18" }
 
+fp-account = { git = "https://github.com/N1ghtStorm/frontier", branch = "debug-collation", default-features = false }
+fp-consensus = { git = "https://github.com/N1ghtStorm/frontier", branch = "debug-collation", default-features = false }
+fp-dynamic-fee = { git = "https://github.com/N1ghtStorm/frontier", branch = "debug-collation", default-features = false }
+fp-ethereum = { git = "https://github.com/N1ghtStorm/frontier", branch = "debug-collation", default-features = false }
+fp-evm = { git = "https://github.com/N1ghtStorm/frontier", branch = "debug-collation", default-features = false }
+fp-rpc = { git = "https://github.com/N1ghtStorm/frontier", branch = "debug-collation", default-features = false }
+fp-self-contained = { git = "https://github.com/N1ghtStorm/frontier", branch = "debug-collation", default-features = false }
+fp-storage = { git = "https://github.com/N1ghtStorm/frontier", branch = "debug-collation", default-features = false }
 
-[patch."https://github.com/atleta-network/polkadot-sdk.git"]
+[patch."https://github.com/N1ghtStorm/polkadot-sdk.git"]
 # Substrate Client
 sc-basic-authorship = { path = "substrate/client/basic-authorship" }
 sc-block-builder = { path = "substrate/client/block-builder" }

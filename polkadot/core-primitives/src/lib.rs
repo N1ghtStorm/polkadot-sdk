@@ -27,6 +27,7 @@ use sp_runtime::{
 	traits::{IdentifyAccount, Verify},
 	MultiSignature,
 };
+use fp_account::EthereumSignature;
 
 pub use sp_runtime::traits::{BlakeTwo256, Hash as HashT};
 
@@ -39,7 +40,8 @@ pub type Moment = u64;
 
 /// Alias to type for a signature for a transaction on the relay chain. This allows one of several
 /// kinds of underlying crypto to be used, so isn't a fixed size when encoded.
-pub type Signature = MultiSignature;
+pub type Signature = EthereumSignature;
+// pub type Signature = MultiSignature;
 
 /// Alias to the public key used for this chain, actually a `MultiSigner`. Like the signature, this
 /// also isn't a fixed size when encoded, as different cryptos have different size public keys.

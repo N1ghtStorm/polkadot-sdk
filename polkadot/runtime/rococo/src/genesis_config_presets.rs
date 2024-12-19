@@ -45,8 +45,25 @@ where
 }
 
 /// Helper function to generate stash, controller and session key from seed
-fn get_authority_keys_from_seed(
-	seed: &str,
+// fn get_authority_keys_from_seed(
+// 	seed: &str,
+// ) -> (
+// 	AccountId,
+// 	AccountId,
+// 	BabeId,
+// 	GrandpaId,
+// 	ValidatorId,
+// 	AssignmentId,
+// 	AuthorityDiscoveryId,
+// 	BeefyId,
+// ) {
+// 	let keys = get_authority_keys_from_seed_no_beefy(seed);
+// 	(keys.0, keys.1, keys.2, keys.3, keys.4, keys.5, keys.6, get_from_seed::<BeefyId>(seed))
+// }
+use sp_core::ecdsa;
+
+pub fn get_authority_keys_from_seed(
+	s: &str,
 ) -> (
 	AccountId,
 	AccountId,
@@ -57,39 +74,52 @@ fn get_authority_keys_from_seed(
 	AuthorityDiscoveryId,
 	BeefyId,
 ) {
-	let keys = get_authority_keys_from_seed_no_beefy(seed);
-	(keys.0, keys.1, keys.2, keys.3, keys.4, keys.5, keys.6, get_from_seed::<BeefyId>(seed))
+	// let keys = get_authority_keys_from_seed_no_beefy(seed);
+	// (keys.0, keys.1, keys.2, keys.3, keys.4, keys.5, keys.6, get_from_seed::<BeefyId>(seed))
+	(
+        get_account_id_from_seed::<ecdsa::Public>(&format!("{}//stash", s)),
+        get_account_id_from_seed::<ecdsa::Public>(s),
+        get_from_seed::<BabeId>(s),
+        get_from_seed::<GrandpaId>(s),
+        // get_from_seed::<ImOnlineId>(s),
+        get_from_seed::<ValidatorId>(s),
+        get_from_seed::<AssignmentId>(s),
+        get_from_seed::<AuthorityDiscoveryId>(s),
+        get_from_seed::<BeefyId>(s),
+    )
 }
 
 /// Helper function to generate stash, controller and session key from seed
-fn get_authority_keys_from_seed_no_beefy(
-	seed: &str,
-) -> (AccountId, AccountId, BabeId, GrandpaId, ValidatorId, AssignmentId, AuthorityDiscoveryId) {
-	(
-		get_account_id_from_seed::<sr25519::Public>(&format!("{}//stash", seed)),
-		get_account_id_from_seed::<sr25519::Public>(seed),
-		get_from_seed::<BabeId>(seed),
-		get_from_seed::<GrandpaId>(seed),
-		get_from_seed::<ValidatorId>(seed),
-		get_from_seed::<AssignmentId>(seed),
-		get_from_seed::<AuthorityDiscoveryId>(seed),
-	)
-}
+// fn get_authority_keys_from_seed_no_beefy(
+// 	seed: &str,
+// ) -> (AccountId, AccountId, BabeId, GrandpaId, ValidatorId, AssignmentId, AuthorityDiscoveryId) {
+// 	// (
+// 	// 	get_account_id_from_seed::<sr25519::Public>(&format!("{}//stash", seed)),
+// 	// 	get_account_id_from_seed::<sr25519::Public>(seed),
+// 	// 	get_from_seed::<BabeId>(seed),
+// 	// 	get_from_seed::<GrandpaId>(seed),
+// 	// 	get_from_seed::<ValidatorId>(seed),
+// 	// 	get_from_seed::<AssignmentId>(seed),
+// 	// 	get_from_seed::<AuthorityDiscoveryId>(seed),
+// 	// )
+// 	// todo!()
+// }
 
 fn testnet_accounts() -> Vec<AccountId> {
 	Vec::from([
-		get_account_id_from_seed::<sr25519::Public>("Alice"),
-		get_account_id_from_seed::<sr25519::Public>("Bob"),
-		get_account_id_from_seed::<sr25519::Public>("Charlie"),
-		get_account_id_from_seed::<sr25519::Public>("Dave"),
-		get_account_id_from_seed::<sr25519::Public>("Eve"),
-		get_account_id_from_seed::<sr25519::Public>("Ferdie"),
-		get_account_id_from_seed::<sr25519::Public>("Alice//stash"),
-		get_account_id_from_seed::<sr25519::Public>("Bob//stash"),
-		get_account_id_from_seed::<sr25519::Public>("Charlie//stash"),
-		get_account_id_from_seed::<sr25519::Public>("Dave//stash"),
-		get_account_id_from_seed::<sr25519::Public>("Eve//stash"),
-		get_account_id_from_seed::<sr25519::Public>("Ferdie//stash"),
+		alith()
+		// get_account_id_from_seed::<sr25519::Public>("Alice"),
+		// get_account_id_from_seed::<sr25519::Public>("Bob"),
+		// get_account_id_from_seed::<sr25519::Public>("Charlie"),
+		// get_account_id_from_seed::<sr25519::Public>("Dave"),
+		// get_account_id_from_seed::<sr25519::Public>("Eve"),
+		// get_account_id_from_seed::<sr25519::Public>("Ferdie"),
+		// get_account_id_from_seed::<sr25519::Public>("Alice//stash"),
+		// get_account_id_from_seed::<sr25519::Public>("Bob//stash"),
+		// get_account_id_from_seed::<sr25519::Public>("Charlie//stash"),
+		// get_account_id_from_seed::<sr25519::Public>("Dave//stash"),
+		// get_account_id_from_seed::<sr25519::Public>("Eve//stash"),
+		// get_account_id_from_seed::<sr25519::Public>("Ferdie//stash"),
 	])
 }
 
@@ -480,50 +510,58 @@ fn rococo_staging_testnet_config_genesis() -> serde_json::Value {
 
 //development
 fn rococo_development_config_genesis() -> serde_json::Value {
-	rococo_testnet_genesis(
-		Vec::from([get_authority_keys_from_seed("Alice")]),
-		get_account_id_from_seed::<sr25519::Public>("Alice"),
-		None,
-	)
+	// rococo_testnet_genesis(
+	// 	Vec::from([get_authority_keys_from_seed("Alice")]),
+	// 	get_account_id_from_seed::<sr25519::Public>("Alice"),
+	// 	None,
+	// )0xf24FF3a9CF04c71Dbc94D0b566f7A27B94566cac
+	todo!()
+}
+
+pub(super) fn alith() -> AccountId {
+	use hex_literal::hex;
+	AccountId::from(hex!("f24FF3a9CF04c71Dbc94D0b566f7A27B94566cac"))
 }
 
 //local_testnet
 fn rococo_local_testnet_genesis() -> serde_json::Value {
 	rococo_testnet_genesis(
 		Vec::from([get_authority_keys_from_seed("Alice"), get_authority_keys_from_seed("Bob")]),
-		get_account_id_from_seed::<sr25519::Public>("Alice"),
-		None,
+		alith(),
+		Some(sp_std::vec![alith()]),
 	)
 }
 
 /// `Versi` is a temporary testnet that uses the same runtime as rococo.
 // versi_local_testnet
 fn versi_local_testnet_genesis() -> serde_json::Value {
-	rococo_testnet_genesis(
-		Vec::from([
-			get_authority_keys_from_seed("Alice"),
-			get_authority_keys_from_seed("Bob"),
-			get_authority_keys_from_seed("Charlie"),
-			get_authority_keys_from_seed("Dave"),
-		]),
-		get_account_id_from_seed::<sr25519::Public>("Alice"),
-		None,
-	)
+	// rococo_testnet_genesis(
+	// 	Vec::from([
+	// 		get_authority_keys_from_seed("Alice"),
+	// 		get_authority_keys_from_seed("Bob"),
+	// 		get_authority_keys_from_seed("Charlie"),
+	// 		get_authority_keys_from_seed("Dave"),
+	// 	]),
+	// 	get_account_id_from_seed::<sr25519::Public>("Alice"),
+	// 	None,
+	// )
+	todo!()
 }
 
 /// Wococo is a temporary testnet that uses almost the same runtime as rococo.
 //wococo_local_testnet
 fn wococo_local_testnet_genesis() -> serde_json::Value {
-	rococo_testnet_genesis(
-		Vec::from([
-			get_authority_keys_from_seed("Alice"),
-			get_authority_keys_from_seed("Bob"),
-			get_authority_keys_from_seed("Charlie"),
-			get_authority_keys_from_seed("Dave"),
-		]),
-		get_account_id_from_seed::<sr25519::Public>("Alice"),
-		None,
-	)
+	// rococo_testnet_genesis(
+	// 	Vec::from([
+	// 		get_authority_keys_from_seed("Alice"),
+	// 		get_authority_keys_from_seed("Bob"),
+	// 		get_authority_keys_from_seed("Charlie"),
+	// 		get_authority_keys_from_seed("Dave"),
+	// 	]),
+	// 	get_account_id_from_seed::<sr25519::Public>("Alice"),
+	// 	None,
+	// )
+	todo!()
 }
 
 /// Provides the JSON representation of predefined genesis config for given `id`.

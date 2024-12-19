@@ -23,6 +23,7 @@ use pallet_staking::Forcing;
 use polkadot_primitives::{AccountId, AccountPublic, AssignmentId, ValidatorId};
 use sp_authority_discovery::AuthorityId as AuthorityDiscoveryId;
 use sp_consensus_babe::AuthorityId as BabeId;
+use sp_core::ecdsa;
 
 #[cfg(feature = "westend-native")]
 use polkadot_primitives::vstaging::SchedulerParams;
@@ -34,6 +35,7 @@ use sc_chain_spec::ChainType;
 use serde::{Deserialize, Serialize};
 use sp_core::{sr25519, Pair, Public};
 use sp_runtime::traits::IdentifyAccount;
+use hex_literal::hex;
 #[cfg(feature = "westend-native")]
 use sp_runtime::Perbill;
 #[cfg(any(feature = "westend-native", feature = "rococo-native"))]
@@ -459,7 +461,7 @@ where
 
 /// Helper function to generate stash, controller and session key from seed
 pub fn get_authority_keys_from_seed(
-	seed: &str,
+	s: &str,
 ) -> (
 	AccountId,
 	AccountId,
@@ -470,40 +472,85 @@ pub fn get_authority_keys_from_seed(
 	AuthorityDiscoveryId,
 	BeefyId,
 ) {
-	let keys = get_authority_keys_from_seed_no_beefy(seed);
-	(keys.0, keys.1, keys.2, keys.3, keys.4, keys.5, keys.6, get_from_seed::<BeefyId>(seed))
+	// let keys = get_authority_keys_from_seed_no_beefy(seed);
+	// (keys.0, keys.1, keys.2, keys.3, keys.4, keys.5, keys.6, get_from_seed::<BeefyId>(seed))
+	(
+        get_account_id_from_seed::<ecdsa::Public>(&format!("{}//stash", s)),
+        get_account_id_from_seed::<ecdsa::Public>(s),
+        get_from_seed::<BabeId>(s),
+        get_from_seed::<GrandpaId>(s),
+        // get_from_seed::<ImOnlineId>(s),
+        get_from_seed::<ValidatorId>(s),
+        get_from_seed::<AssignmentId>(s),
+        get_from_seed::<AuthorityDiscoveryId>(s),
+        get_from_seed::<BeefyId>(s),
+    )
 }
 
-/// Helper function to generate stash, controller and session key from seed
-pub fn get_authority_keys_from_seed_no_beefy(
-	seed: &str,
-) -> (AccountId, AccountId, BabeId, GrandpaId, ValidatorId, AssignmentId, AuthorityDiscoveryId) {
-	(
-		get_account_id_from_seed::<sr25519::Public>(&format!("{}//stash", seed)),
-		get_account_id_from_seed::<sr25519::Public>(seed),
-		get_from_seed::<BabeId>(seed),
-		get_from_seed::<GrandpaId>(seed),
-		get_from_seed::<ValidatorId>(seed),
-		get_from_seed::<AssignmentId>(seed),
-		get_from_seed::<AuthorityDiscoveryId>(seed),
-	)
+
+mod devnet_keys {
+    use super::*;
+
+    pub(super) fn alith() -> AccountId {
+        AccountId::from(hex!("f24FF3a9CF04c71Dbc94D0b566f7A27B94566cac"))
+    }
+
+    pub(super) fn baltathar() -> AccountId {
+        AccountId::from(hex!("3Cd0A705a2DC65e5b1E1205896BaA2be8A07c6e0"))
+    }
+
+    pub(super) fn charleth() -> AccountId {
+        AccountId::from(hex!("798d4Ba9baf0064Ec19eB4F0a1a45785ae9D6DFc"))
+    }
+
+    pub(super) fn dorothy() -> AccountId {
+        AccountId::from(hex!("773539d4Ac0e786233D90A233654ccEE26a613D9"))
+    }
+
+    pub(super) fn ethan() -> AccountId {
+        AccountId::from(hex!("Ff64d3F6efE2317EE2807d223a0Bdc4c0c49dfDB"))
+    }
+
+    pub(super) fn faith() -> AccountId {
+        AccountId::from(hex!("C0F0f4ab324C46e55D02D0033343B4Be8A55532d"))
+    }
+
+    pub(super) fn goliath() -> AccountId {
+        AccountId::from(hex!("7BF369283338E12C90514468aa3868A551AB2929"))
+    }
 }
+
+
+/// Helper function to generate stash, controller and session key from seed
+// pub fn get_authority_keys_from_seed_no_beefy(
+// 	seed: &str,
+// ) -> (AccountId, AccountId, BabeId, GrandpaId, ValidatorId, AssignmentId, AuthorityDiscoveryId) {
+// 	(
+// 		get_account_id_from_seed::<sr25519::Public>(&format!("{}//stash", seed)),
+// 		get_account_id_from_seed::<sr25519::Public>(seed),
+// 		get_from_seed::<BabeId>(seed),
+// 		get_from_seed::<GrandpaId>(seed),
+// 		get_from_seed::<ValidatorId>(seed),
+// 		get_from_seed::<AssignmentId>(seed),
+// 		get_from_seed::<AuthorityDiscoveryId>(seed),
+// 	)
+// }
 
 #[cfg(feature = "westend-native")]
 fn testnet_accounts() -> Vec<AccountId> {
 	vec![
-		get_account_id_from_seed::<sr25519::Public>("Alice"),
-		get_account_id_from_seed::<sr25519::Public>("Bob"),
-		get_account_id_from_seed::<sr25519::Public>("Charlie"),
-		get_account_id_from_seed::<sr25519::Public>("Dave"),
-		get_account_id_from_seed::<sr25519::Public>("Eve"),
-		get_account_id_from_seed::<sr25519::Public>("Ferdie"),
-		get_account_id_from_seed::<sr25519::Public>("Alice//stash"),
-		get_account_id_from_seed::<sr25519::Public>("Bob//stash"),
-		get_account_id_from_seed::<sr25519::Public>("Charlie//stash"),
-		get_account_id_from_seed::<sr25519::Public>("Dave//stash"),
-		get_account_id_from_seed::<sr25519::Public>("Eve//stash"),
-		get_account_id_from_seed::<sr25519::Public>("Ferdie//stash"),
+		devnet_keys::alith(),
+		devnet_keys::baltathar(),
+		devnet_keys::charleth(),
+		devnet_keys::dorothy(),
+		// get_account_id_from_seed::<sr25519::Public>("Eve"),
+		// get_account_id_from_seed::<sr25519::Public>("Ferdie"),
+		// get_account_id_from_seed::<sr25519::Public>("Alice//stash"),
+		// get_account_id_from_seed::<sr25519::Public>("Bob//stash"),
+		// get_account_id_from_seed::<sr25519::Public>("Charlie//stash"),
+		// get_account_id_from_seed::<sr25519::Public>("Dave//stash"),
+		// get_account_id_from_seed::<sr25519::Public>("Eve//stash"),
+		// get_account_id_from_seed::<sr25519::Public>("Ferdie//stash"),
 	]
 }
 
@@ -579,7 +626,7 @@ pub fn westend_testnet_genesis(
 fn westend_development_config_genesis() -> serde_json::Value {
 	westend_testnet_genesis(
 		vec![get_authority_keys_from_seed("Alice")],
-		get_account_id_from_seed::<sr25519::Public>("Alice"),
+		devnet_keys::alith(),
 		None,
 	)
 }
@@ -649,7 +696,7 @@ pub fn wococo_development_config() -> Result<RococoChainSpec, String> {
 fn westend_local_testnet_genesis() -> serde_json::Value {
 	westend_testnet_genesis(
 		vec![get_authority_keys_from_seed("Alice"), get_authority_keys_from_seed("Bob")],
-		get_account_id_from_seed::<sr25519::Public>("Alice"),
+		devnet_keys::alith(),
 		None,
 	)
 }

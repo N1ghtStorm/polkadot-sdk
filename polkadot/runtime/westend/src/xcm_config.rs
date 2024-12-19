@@ -45,9 +45,10 @@ use xcm_builder::{
 	OriginToPluralityVoice, SignedAccountId32AsNative, SignedToAccountId32,
 	SovereignSignedViaLocation, TakeWeightCredit, TrailingSetTopicAsId, UsingComponents,
 	WeightInfoBounds, WithComputedOrigin, WithUniqueTopic, XcmFeeManagerFromComponents,
-	XcmFeeToAccount,
+	XcmFeeToAccount, AccountKey20Aliases, SignedAccountKey20AsNative
 };
 use xcm_executor::XcmExecutor;
+// use xcm_primitives::SignedToAccountId20;
 
 parameter_types! {
 	pub const TokenLocation: Location = Here.into_location();
@@ -67,7 +68,7 @@ pub type LocationConverter = (
 	// We can convert a child parachain using the standard `AccountId` conversion.
 	ChildParachainConvertsVia<ParaId, AccountId>,
 	// We can directly alias an `AccountId32` into a local account.
-	AccountId32Aliases<ThisNetwork, AccountId>,
+	AccountKey20Aliases<ThisNetwork, AccountId>,
 	// Foreign locations alias into accounts according to a hash of their standard description.
 	HashedDescription<AccountId, DescribeFamily<DescribeAllTerminal>>,
 );
@@ -94,7 +95,7 @@ type LocalOriginConverter = (
 	ChildParachainAsNative<parachains_origin::Origin, RuntimeOrigin>,
 	// If the origin kind is `Native` and the XCM origin is the `AccountId32` location, then it can
 	// be expressed using the `Signed` origin variant.
-	SignedAccountId32AsNative<ThisNetwork, RuntimeOrigin>,
+	SignedAccountKey20AsNative<ThisNetwork, RuntimeOrigin>,
 	// Xcm origins can be represented natively under the Xcm pallet's Xcm origin.
 	XcmPassthrough<RuntimeOrigin>,
 );
@@ -209,10 +210,11 @@ impl xcm_executor::Config for XcmConfig {
 	type SubscriptionService = XcmPallet;
 	type PalletInstancesInfo = AllPalletsWithSystem;
 	type MaxAssetsIntoHolding = MaxAssetsIntoHolding;
-	type FeeManager = XcmFeeManagerFromComponents<
-		WaivedLocations,
-		XcmFeeToAccount<Self::AssetTransactor, AccountId, TreasuryAccount>,
-	>;
+	// type FeeManager = XcmFeeManagerFromComponents<
+	// 	WaivedLocations,
+	// 	XcmFeeToAccount<Self::AssetTransactor, AccountId, TreasuryAccount>,
+	// >;
+	type FeeManager = ();
 	type MessageExporter = ();
 	type UniversalAliases = Nothing;
 	type CallDispatcher = RuntimeCall;
@@ -241,9 +243,9 @@ pub type GeneralAdminToPlurality =
 
 /// location of this chain.
 pub type LocalOriginToLocation = (
-	GeneralAdminToPlurality,
-	// And a usual Signed origin to be used in XCM as a corresponding AccountId32
-	SignedToAccountId32<RuntimeOrigin, AccountId, ThisNetwork>,
+	// GeneralAdminToPlurality,
+	// // And a usual Signed origin to be used in XCM as a corresponding AccountId32
+	// SignedToAccountId20<RuntimeOrigin, AccountId, ThisNetwork>,
 );
 
 /// Type to convert the `StakingAdmin` origin to a Plurality `Location` value.
